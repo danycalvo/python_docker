@@ -1,40 +1,25 @@
 from flask import Flask, jsonify, request
 from flask_restful import Resource, Api
+
 import pymongo
 import os
 import json
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from funciones import checkdata
+from funciones import create_app
+from funciones import Add, Subtract
 
-
-login_manager = LoginManager()
-db = SQLAlchemy()
+#login_manager = LoginManager()
 
 
 settings_module = os.getenv('APP_SETTINGS_MODULE')
 data = os.environ.get('MI_DATA', 'Result:')
-url_db = os.environ.get('URL_DB')
+url_db = os.environ.get('URL_DB', "DATABASE_URL")
 print("Datos de la BD:")
-# print(url_db)
+print(url_db)
+print(data)
 print(settings_module)
-
-
-def create_app(settings_module):
-    app = Flask(__name__)
-    app.config['DEBUG'] = True
-    app.config['SECRET_KEY'] = '7110c8ae51a4b5af97be6534caef90e4bb9bdcb3380af008f90b23a5d1616bf319bc298105da20fe'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:testing@localhost:5432/miniblog'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-    login_manager.init_app(app)
-    login_manager.login_view = "login"
-
-    db.init_app(app)
-
-    # Custom error handlers
-    # register_error_handlers(app)
-
-    return app
 
 
 app = create_app(settings_module)
@@ -78,105 +63,6 @@ class Mongo(Resource):
 """
 
 
-class Subtract(Resource):
-    def post(self):
-
-        # Step 1 get posted data
-        retJson = {}
-        mess = "Error con los datos recibidos"
-        postedData = request.get_json()
-        # Step 1 valid los data
-        status_code = checkdata(postedData)
-        if status_code != 200:
-            retJson = {
-                'Message': mess,
-                'Status ': status_code
-            }
-            retMap = jsonify(retJson)
-        else:
-            x = postedData["x"]
-            y = postedData["y"]
-            x = int(x)
-            y = int(y)
-
-            # Step 2 Add the posted data
-            ret = x - y
-            retMap = {
-                'Sum': ret,
-                'Status code': 200
-            }
-            return jsonify(retMap)
-
-
-class Add(Resource):
-    def post(self):
-
-        # Step 1 get posted data
-        retJson = {}
-        errore = "Error de datos"
-        mess = "Error con los datos recibidos"
-        postedData = request.get_json()
-        # Step 1 valid los data
-        status_code = checkdata(postedData)
-        print(status_code)
-        if status_code == 301:
-            print(" status code paso 301")
-            print("paso 301")
-            retJson = {
-                'Message': "error ",
-                'Status ': 301
-            }
-            print("301 error")
-            print(retJson)
-            retMap = jsonify(retJson)
-            print(retMap)
-            print("301 error print retMap arriba")
-            retMap = {
-                'Resultado': errore,
-                'Status code': 301
-            }
-            # return jsonify(retMap)
-        else:
-            print("else status code paso 200")
-            x = postedData["x"]
-            y = postedData["y"]
-            x = x
-            y = y
-
-            # Step 2 Add the posted data
-            ret = x + y
-            retMap = {
-                "El resultado es:" + ':': ret,
-                'Status code': 200
-            }
-
-        return jsonify(retMap)
-
-
-def checkdata(postedData):
-
-    estate = 200
-    if "x" not in postedData or "y" not in postedData:
-        estate = int(301)
-        print("falta uno")
-        return estate
-    else:
-        a = postedData["x"]
-        b = postedData["y"]
-
-        if not type(a) == int:
-            estate = 301
-            print("x mal")
-            return estate
-
-        if not type(b) == int:
-            estate = 301
-            print("y mal")
-            return estate
-
-    return estate
-
-
 def register_error_handlers(app):
 
     @app.errorhandler(500)
@@ -204,4 +90,6 @@ if __name__ == "__main__":
     app.run(host='0.0.0.0')
 
 # curl -X POST -H "Content-Type: application/json" -d '{"x": 2, "y": 7}' http://127.0.0.1:5000/add
+# curl -X POST -H "Content-Type: application/json" -d '{"x": 2, "y": 7}' http://192.168.0.223:5000/add
+# curl -X POST -H "Content-Type: application/json" -d '{"x": 12, "y": 7}' http://192.168.0.223:5000/subtract
 # https://blog.entirely.digital/docker-gunicorn-and-flask/
