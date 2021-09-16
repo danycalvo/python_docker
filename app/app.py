@@ -8,15 +8,9 @@ from flask_mongoengine import MongoEngine
 from funciones import create_app, checkdata
 from funciones import Add, Subtract
 
-#login_manager = LoginManager()
-
 data = os.environ.get('MI_DATA', 'Result:')
-
 settings_module = os.getenv('APP_SETTINGS_MODULE')
-
 app = create_app(settings_module)
-
-
 app.config['MONGODB_SETTINGS'] = {
     'db': 'pythonlog',
     'host': 'localhost',
@@ -25,8 +19,6 @@ app.config['MONGODB_SETTINGS'] = {
 
 db = MongoEngine()
 db.init_app(app)
-
-#app = Flask(__name__)
 #app.config['DEBUG'] = True
 api = Api(app)
 app.logger.info("inicio app")
@@ -62,3 +54,4 @@ if __name__ == "__main__":
 # curl -X POST -H "Content-Type: application/json" -d '{"x": 12, "y": 7}' http://192.168.0.223:5000/subtract
 # https://blog.entirely.digital/docker-gunicorn-and-flask/
 # https://github.com/danycalvo/python_docker.git
+# https://github.com/danycalvo/python_docker/
