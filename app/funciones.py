@@ -1,8 +1,10 @@
-from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, jsonify, request, current_app
+#from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api
+import time
+#from loguear import loguea
 
-db = SQLAlchemy()
+#db = SQLAlchemy()
 
 
 def create_app(settings_module):
@@ -15,7 +17,7 @@ def create_app(settings_module):
     # login_manager.init_app(app)
     #login_manager.login_view = "login"
 
-    db.init_app(app)
+    # db.init_app(app)
 
     # Custom error handlers
     # register_error_handlers(app)
@@ -24,7 +26,14 @@ def create_app(settings_module):
 
 
 def checkdata(postedData):
-
+    current_app.logger.info("verifica datos")
+    from dbmongo.models import Mensaje
+    ts = time.time()
+    print("el tipo es ")
+    print(type(ts))
+    s1 = Mensaje(ts=time.time(), texto='Verifica data')
+    s1.save()
+    current_app.logger.info("save ")
     estate = 200
     if "x" not in postedData or "y" not in postedData:
         estate = int(301)
@@ -56,6 +65,7 @@ class Subtract(Resource):
         postedData = request.get_json()
         # Step 1 valid los data
         status_code = checkdata(postedData)
+        current_app.logger.info("resta 2 nros")
         if status_code != 200:
             retJson = {
                 'Message': mess,
@@ -87,6 +97,7 @@ class Add(Resource):
         postedData = request.get_json()
         # Step 1 valid los data
         status_code = checkdata(postedData)
+        current_app.logger.info("suma 2 nros")
         print(status_code)
         if status_code == 301:
             print(" status code paso 301")
