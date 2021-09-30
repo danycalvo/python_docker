@@ -9,5 +9,5 @@ USER 1001
 ENV MI_DATA="DC says The result is:"
 #ENV URL_DB="mongodb-26-rhel7:27017"
 #ENV URL_DB="dc-mongodb:27017"
-EXPOSE 5001
+EXPOSE 5000
 CMD ["gunicorn", "--bind", "0.0.0.0:5001","--workers","2","app.app:app"]
